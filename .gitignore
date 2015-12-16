@@ -7,3 +7,4 @@ login_log.txt
 
 #include files
 !csv/.htaccess
+!csv/index.html
