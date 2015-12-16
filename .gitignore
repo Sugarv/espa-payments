@@ -4,3 +4,6 @@ csv/*
 
 #exclude files
 login_log.txt
+
+#include files
+!csv/.htaccess
