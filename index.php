@@ -15,6 +15,7 @@
 
 // Imports
 require './vendor/autoload.php';
+require 'config.php';
 require 'functions.php';
 ?>
 <html lang="en">
@@ -132,6 +133,9 @@ else {
       echo "</div></div></div>";
       exit();
     }
+    // log to file
+    if ($canLog)
+      logToFile($inpAfm, $logFile);
 ?>
    <div class="container">
       <!-- Create nav-tabs -->
@@ -238,7 +242,7 @@ else {
 ?>
    <footer>
      <br>
-   	<p><small>&copy; B.Ζαχαριουδάκης<br> Τμ. Μηχανογράφησης ΔΙ.Π.Ε. Ηρακλείου, 2015</small></p>
+   	<p><small>&copy; B.Ζαχαριουδάκης<br><a href="mailto:it@dipe.ira.sch.gr">Τμ. Μηχανογράφησης ΔΙ.Π.Ε. Ηρακλείου</a>, 2015</small></p>
    </footer>
 </div> <!-- /container -->
 </body>
