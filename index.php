@@ -32,6 +32,7 @@ require 'functions.php';
 		<script src="lib/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="lib/bootstrap.min.css">
     <link rel="stylesheet" href="vendor/fortawesome/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="lib/espa-csv.css">
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -241,9 +242,15 @@ else {
 } // of else user filled form
 ?>
    <footer>
-     <br>
-   	<p><small>&copy; B.Ζαχαριουδάκης<br><a href="mailto:it@dipe.ira.sch.gr">Τμ. Μηχανογράφησης ΔΙ.Π.Ε. Ηρακλείου</a>, 2015</small></p>
+     <div class="container">
+       <div class="row">
+         <div class="col-md-12">
+           <br>
+           <p><small>&copy; B.Ζαχαριουδάκης<br><a href="mailto:it@dipe.ira.sch.gr">Τμ. Μηχανογράφησης ΔΙ.Π.Ε. Ηρακλείου</a>, 2015</small></p>
+         </div>
+       </div>
+     </div>
    </footer>
-</div> <!-- /container -->
+
 </body>
 </html>
