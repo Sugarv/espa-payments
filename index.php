@@ -33,6 +33,7 @@ require 'functions.php';
 		<link rel="stylesheet" href="lib/bootstrap.min.css">
     <link rel="stylesheet" href="vendor/fortawesome/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="lib/espa-csv.css">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
