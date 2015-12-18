@@ -267,7 +267,8 @@ function renderSynola($apod, $asfal, $foros, $kath) {
 // Log successful entries to login_log.txt which is protected by .htaccess
 function logToFile($afm, $fname) {
   $fh = fopen($fname, 'a');
-  $data = $afm . "\t" . date('d-m-Y, H:i:s') . "\t" . $_SERVER['HTTP_USER_AGENT'] ."\n";
+	$maskedAfm = substr($afm, 0, -4) . '****';
+  $data = $maskedAfm . "\t" . date('d-m-Y, H:i:s') . "\t" . $_SERVER['HTTP_USER_AGENT'] ."\n";
   fwrite($fh, $data);
   fclose($fh);
 }
