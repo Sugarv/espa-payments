@@ -71,7 +71,7 @@ require 'functions.php';
 if (isset($_GET['logout'])) {
   $_POST['inputAfm'] = $_POST['inputSurname'] = NULL;
 }
-if (!isset($_POST['inputAfm']) || !isset($_POST['inputSurname']) || strlen($_POST['inputAfm']) || strlen($_POST['inputSurname']))
+if (!isset($_POST['inputAfm']) || !isset($_POST['inputSurname']) || !strlen($_POST['inputAfm']) || !strlen($_POST['inputSurname']))
 {
  ?>
 	<div class="container">
