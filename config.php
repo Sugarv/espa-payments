@@ -7,6 +7,8 @@ $dnsiLink = 'http://dipe.ira.sch.gr/site';
 // file must be .txt to be protected from access
 $canLog = 0;
 $logFile = 'login_log.txt';
+// clean up pdf files after XX minutes
+$cleanUpAfter = 10;
 
 // Espa column headers
 // ESPA csv is a mess, with duplicate column names, that's why we keep field numbers in this array...

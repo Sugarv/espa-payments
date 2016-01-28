@@ -48,7 +48,7 @@ require 'functions.php';
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a class="navbar-brand" href="#">Μισθοδοσία ΕΣΠΑ</a></li>
+            <li><a class="navbar-brand" href="#">Μισθοδοσία ΕΣΠΑ/ΠΔΕ</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li><a class="navbar-brand pull-right" href="<?= $dnsiLink ?>" target="_blank"><small><?= $dnsiStrShort ?></small></a></li>
@@ -59,9 +59,9 @@ require 'functions.php';
 
     <div class="jumbotron">
       <div class="container">
-        <h2><i class="fa fa-money fa-4x"></i>&nbsp;&nbsp;Μισθοδοσία Αναπληρωτών ΕΣΠΑ</h2>
+        <h2><i class="fa fa-money fa-4x"></i>&nbsp;&nbsp;Μισθοδοσία Αναπληρωτών ΕΣΠΑ/ΠΔΕ</h2>
 				<h3><?= $dnsiStr?></h3>
-        <p>Ενημέρωση μισθοδοσίας αναπληρωτών ΕΣΠΑ</p>
+        <p>Ενημέρωση μισθοδοσίας αναπληρωτών ΕΣΠΑ/ΠΔΕ</p>
       </div>
     </div>
 
@@ -110,6 +110,8 @@ else {
     $adStr = 'ΑΔ.ΑΣΘ.';
     $synStr = 'ΣΥΝΟΛΟ';
     $anadrStr = 'ΑΝΑΔΡΟΜΙΚΑ';
+    // init pdf output
+    $pdfOutput = "<h4>$dnsiStr</h4><h3>Ενημέρωση μισθοδοσίας αναπληρωτών ΕΣΠΑ/ΠΔΕ</h3>";
 
     // find all csv files in csv directory
     $csvFiles = glob("csv/*.csv");
@@ -223,19 +225,33 @@ else {
                if ($anadromika || $adeies) {
                  $outPut .= renderSynola($synolo_ap, $synolo_asf, $synolo_for, $synolo_kath);
                }
+               $pdfOutput .= '<h3>' . $month .'</h3><br>' . $outPut . '<pagebreak />';
                echo $outPut;
             ?>
              </div>
              <?php
              $first = 0;
            } // of foreach
+           // Remove last pagebreak
+           $pdfOutput = substr($pdfOutput, 0, -13);
           ?>
         </div> <!-- of tab-content-->
       </div> <!-- of panel-body -->
+	  <div class="panel-footer">
+		<div class="row">
+			<div class="col-md-2">
+        <button id="pdfButton" type="button" name="button" class="btn btn-sm btn-success btn-block">Εξαγωγή όλων σε PDF</button>
+			</div>
+      <div id="postData" style="display: none;">
+        <?= htmlspecialchars($pdfOutput)?>
+      </div>
+      <div id="pdfLink"></div>
+		</div>
+	  </div>
     </div> <!-- of panel -->
       <div class="row">
         <div class="col-md-2">
-            <a href="index.php?logout=1" class="btn btn-lg btn-primary btn-block" >Έξοδος</a>
+            <a href="index.php?logout=1" class="btn btn-lg btn-danger btn-block" >Έξοδος</a>
         </div>
       </div>
    </div> <!-- of container -->
@@ -252,6 +268,24 @@ else {
        </div>
      </div>
    </footer>
-
+<?php
+  // Clean up old pdf files
+  clean_up($cleanUpAfter);
+?>
 </body>
+<script type = "text/javascript">
+     $(document).ready(function() {
+       var div = document.getElementById("postData");
+       var myData = div.textContent;
+        $("#pdfButton").click(function(event){
+            $.post(
+              "pdf.php",
+              { data: myData },
+              function(data) {
+               $('#pdfLink').html(data);
+              }
+           );
+        });
+     });
+  </script>
 </html>

@@ -44,6 +44,14 @@ function parseFind($csvFile, $afm, $surname){
      $csv->parse($csvFile);
      $parsed = $csv->data;
 
+		 // enhanced check of surname (instead of 'contains' in fullname)
+		 if ($parsed){
+			 $tmp = explode(' ',$parsed[0][1]);
+			 $fileSurname = $tmp[0];
+			 if (strcmp(grstrtoupper($surname), $fileSurname) <> 0)
+					return ['parsed' => [], 'month' => []];
+		 }
+
      // find month
      $csv->offset = 1;
      $csv->conditions = '19 contains ΜΙΣΘΟΔΟΣΙΑ';
@@ -126,7 +134,7 @@ function renderTable($rec, $hdr, $isAnadr = 0) {
          <table class="table table-bordered table-hover table-condensed table-responsive csv-results">
                  <thead>
                   <tr>
-                     <th colspan=4 class="info">Τακτική μισθοδοσία</th>
+                     <th colspan=3 class="info">Τακτική μισθοδοσία</th>
                   </tr>
                   <tr>
                      <th>A/A</th>
@@ -155,7 +163,7 @@ function renderTable($rec, $hdr, $isAnadr = 0) {
          <table class="table table-bordered table-hover table-condensed table-responsive csv-results">
                  <thead>
                   <tr>
-                     <th colspan=4 class="info"><?= $rec[$hdr['ΙΚΑ']]; ?></th>
+                     <th colspan=3 class="info"><?= $rec[$hdr['ΙΚΑ']]; ?></th>
                   </tr>
                   <tr>
                      <th>A/A</th>
@@ -180,7 +188,7 @@ function renderTable($rec, $hdr, $isAnadr = 0) {
                      $tameio = 1;
                   ?>
                      <tr>
-                        <td colspan=4><?= $rec[$hdr['ΤΑΜΕΙΟ']]; ?></td>
+                        <td colspan=3><?= $rec[$hdr['ΤΑΜΕΙΟ']]; ?></td>
                      </tr>
                      <tr>
                         <td>3</td>
@@ -195,7 +203,7 @@ function renderTable($rec, $hdr, $isAnadr = 0) {
                   <?php endif;
                   ?>
                   <tr>
-                     <td colspan = 4>OAEΔ</td>
+                     <td colspan = 3>OAEΔ</td>
                   </tr>
                   <tr>
                      <td></td>
@@ -206,7 +214,7 @@ function renderTable($rec, $hdr, $isAnadr = 0) {
                      <td colspan=2>ΣΥΝΟΛΟ</td>
                      <td><?= filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΙΚΑ)')+ filterCol($rec,$hdr,'ΟΑΕΔ')+filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΤΑΜ)') ?></td>
                   </tr>
-                  <tr><td colspan=4></td></tr>
+                  <tr><td colspan=3></td></tr>
                   <tr class="info">
                      <td colspan=4><h4><strong>Σύνολα</strong></h4></td>
                   </tr>
@@ -271,5 +279,13 @@ function logToFile($afm, $fname) {
   $data = $maskedAfm . "\t" . date('d-m-Y, H:i:s') . "\t" . $_SERVER['HTTP_USER_AGENT'] ."\n";
   fwrite($fh, $data);
   fclose($fh);
+}
+
+// Clean up files after 10 minutes
+function clean_up($limit = 10){
+	foreach(glob('pdf/*.pdf') as $file){
+		$diff = round((time() - filemtime($file)) / 60, 2);
+		if($diff > $limit) unlink($file);
+	}
 }
  ?>

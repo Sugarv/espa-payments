@@ -1,6 +1,7 @@
 # exclude folders
 vendor/*
 csv/*
+pdf/*
 
 #exclude files
 login_log.txt
@@ -8,3 +9,4 @@ login_log.txt
 #include files
 !csv/.htaccess
 !csv/index.html
+!pdf/index.html
