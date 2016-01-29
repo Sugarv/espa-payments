@@ -1,13 +1,15 @@
 <?php
 // Export to PDF using mPDF
-require './vendor/autoload.php';
-require 'config.php';
+require_once './vendor/autoload.php';
+require_once 'config.php';
+require_once 'functions.php';
 
 $data = htmlspecialchars_decode($_REQUEST['data']);
+$afm = $_REQUEST['afm'];
 
 $stylesheet = file_get_contents('lib/bootstrap.min.css');
 
-$fname = 'pdf/espa_' . rand() . '.pdf';
+$fname = 'pdf/es_' . $afm . '_' . rand() . '.pdf';
 $footer = "$dnsiStrShort";
 
 // mPDF initialization & pdf creation
@@ -19,6 +21,10 @@ $mpdf->WriteHTML($data,2);
 
 $mpdf->Output($fname);
 
-// return file link
+//log to file
+if ($canLog)
+  logToFile($afm, $logFile, 1);
+
+// echo (return) file link
 echo "<a href='$fname' target='_blank'><strong>Λήψη αρχείου</strong></a>";
 ?>

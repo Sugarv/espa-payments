@@ -272,11 +272,14 @@ function renderSynola($apod, $asfal, $foros, $kath) {
   return $ret;
 }
 
-// Log successful entries to login_log.txt which is protected by .htaccess
-function logToFile($afm, $fname) {
+// Log successful entries (or pdf creation) to login_log.txt which is protected by .htaccess
+function logToFile($afm, $fname, $pdf = 0) {
   $fh = fopen($fname, 'a');
 	$maskedAfm = substr($afm, 0, -4) . '****';
-  $data = $maskedAfm . "\t" . date('d-m-Y, H:i:s') . "\t" . $_SERVER['HTTP_USER_AGENT'] ."\n";
+	if ($pdf)
+		$data = $maskedAfm . ' has created PDF' ."\n";
+	else
+  	$data = $maskedAfm . "\t" . date('d-m-Y, H:i:s') . "\t" . $_SERVER['HTTP_USER_AGENT'] ."\n";
   fwrite($fh, $data);
   fclose($fh);
 }

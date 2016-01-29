@@ -277,10 +277,11 @@ else {
      $(document).ready(function() {
        var div = document.getElementById("postData");
        var myData = div.textContent;
+       var userAfm = <?= $inpAfm ?>;
         $("#pdfButton").click(function(event){
             $.post(
               "pdf.php",
-              { data: myData },
+              { afm: userAfm, data: myData },
               function(data) {
                $('#pdfLink').html(data);
               }

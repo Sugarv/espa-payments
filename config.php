@@ -5,7 +5,7 @@ $dnsiStrShort = 'ΔΙ.Π.Ε. Ηρακλείου';
 $dnsiLink = 'http://dipe.ira.sch.gr/site';
 // set canLog to 1 to enable logging to file
 // file must be .txt to be protected from access
-$canLog = 0;
+$canLog = 1;
 $logFile = 'login_log.txt';
 // clean up pdf files after XX minutes
 $cleanUpAfter = 10;
