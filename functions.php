@@ -30,6 +30,7 @@ function grstrtoupper($string) {
 // uses https://github.com/parsecsv/parsecsv-for-php
 function parseFind($csvFile, $afm, $surname){
      // init vars
+     global $hdr;
      $empOffset = 5;
      $anadrData = [];
      // parse csv & find employee
@@ -39,7 +40,7 @@ function parseFind($csvFile, $afm, $surname){
      $csv->heading = false;
      // find employee T.M.
      $csv->offset = $empOffset;
-     $condition = '8 is '.$afm.' AND 1 contains '.grstrtoupper($surname);
+     $condition = $hdr['ΑΦΜ'] . ' is '.$afm.' AND 1 contains '.grstrtoupper($surname);
      $csv->conditions = $condition;
      $csv->parse($csvFile);
      $parsed = $csv->data;
@@ -52,9 +53,9 @@ function parseFind($csvFile, $afm, $surname){
 					return ['parsed' => [], 'month' => []];
 		 }
 
-     // find month @ column 20
+     // find month @ column ΜΗΝΑΣ
      $csv->offset = 1;
-     $csv->conditions = '19 contains ΜΙΣΘΟΔΟΣΙΑ';
+     $csv->conditions = $hdr['ΜΗΝΑΣ'] . ' contains ΜΙΣΘΟΔΟΣΙΑ';
      $csv->parse($csvFile);
      //$csv->fields =[19];
      $data = $csv->data;

@@ -240,7 +240,7 @@ else {
       </div> <!-- of panel-body -->
 	  <div class="panel-footer">
 		<div class="row">
-			<div class="col-md-2">
+			<div class="col-md-3">
         <button id="pdfButton" type="button" name="button" class="btn btn-sm btn-success btn-block">Εξαγωγή όλων σε PDF</button>
 			</div>
       <div id="postData" style="display: none;">
