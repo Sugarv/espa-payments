@@ -87,6 +87,7 @@ if (!isset($_POST['inputAfm']) || !isset($_POST['inputSurname']) || !strlen($_PO
                  <br>
 			        <input id="submit" class="btn btn-lg btn-primary btn-block" type="submit" value="Είσοδος">
 			      </form>
+               <small><?= getLatestMonth(); ?></small>
 
 	        </div>
 	        <div class="col-md-4">

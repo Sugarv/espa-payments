@@ -52,14 +52,17 @@ function parseFind($csvFile, $afm, $surname){
 					return ['parsed' => [], 'month' => []];
 		 }
 
-     // find month
+     // find month @ column 20
      $csv->offset = 1;
      $csv->conditions = '19 contains ΜΙΣΘΟΔΟΣΙΑ';
      $csv->parse($csvFile);
      //$csv->fields =[19];
      $data = $csv->data;
-     $tmp = explode(' ',$data[0][19]);
-     $month = $tmp[2] . '_' . $tmp[3];
+     if($data){
+      $tmp = explode(' ',$data[0][19]);
+      $month = $tmp[2] . '_' . $tmp[3];
+     }
+     else $month = 'ΜΗΝΑΣ';
 
      // find anadromika (if any)
      $csv->offset = $empOffset;
@@ -290,5 +293,19 @@ function clean_up($limit = 10){
 		$diff = round((time() - filemtime($file)) / 60, 2);
 		if($diff > $limit) unlink($file);
 	}
+}
+
+// get the latest month from csv filenames.
+// Requires ALL files to be named YYMM_something.csv (Y: Year, M: month, e.g. 1610_etc.csv)
+function getLatestMonth(){
+   $csvFiles = glob("csv/*.csv");
+   foreach ($csvFiles as $csvFile) {
+      if (is_int((int)substr($csvFile,4,4)))
+         $monAr[] = substr($csvFile,4,4);
+      else
+         return;
+   }
+   $max = max($monAr);
+   echo "Τελευταία Μισθοδοσία: " . substr($max, 2, 2) . "/20" . substr($max, 0, 2);
 }
  ?>
