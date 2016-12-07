@@ -93,6 +93,8 @@ if (!isset($_POST['inputAfm']) || !isset($_POST['inputSurname']) || !strlen($_PO
 	        <div class="col-md-4">
 	          <h2>Βοήθεια</h2>
 	          <p>Εισάγετε ΜΟΝΟ το <strong>ΕΠΩΝΥΜΟ</strong> σας (με ελληνικούς χαρακτήρες) και το <strong>Α.Φ.Μ.</strong> σας.</p>
+            <br>
+            <p><?= $customMessage; ?></p>
 	       </div>
 		</div>
    </div>
@@ -264,7 +266,7 @@ else {
        <div class="row">
          <div class="col-md-12">
            <br>
-           <p><small>&copy; B.Ζαχαριουδάκης<br><a href="mailto:it@dipe.ira.sch.gr">Τμ. Μηχανογράφησης ΔΙ.Π.Ε. Ηρακλείου</a>, 2015</small></p>
+           <p><small>&copy; B.Ζαχαριουδάκης<br><a href="mailto:it@dipe.ira.sch.gr">Τμ. Μηχανογράφησης ΔΙ.Π.Ε. Ηρακλείου</a>, 2015-16</small></p>
          </div>
        </div>
      </div>

@@ -30,29 +30,43 @@ function grstrtoupper($string) {
 // uses https://github.com/parsecsv/parsecsv-for-php
 function parseFind($csvFile, $afm, $surname){
      // init vars
-     global $hdr;
+     global $hdr, $customCodes;
      $empOffset = 5;
      $anadrData = [];
-     // parse csv & find employee
+     // parse csv
      $csv = new parseCSV();
      $csv->encoding('iso8859-7','UTF-8');
      $csv->delimiter = ";";
      $csv->heading = false;
      // find employee T.M.
-     $csv->offset = $empOffset;
-     $condition = $hdr['ΑΦΜ'] . ' is '.$afm.' AND 1 contains '.grstrtoupper($surname);
-     $csv->conditions = $condition;
-     $csv->parse($csvFile);
-     $parsed = $csv->data;
+     // search if employee has custom code (set @ config.php)
+     if (array_key_exists($afm, $customCodes)){
+       if (strcmp($surname, $customCodes[$afm]) <> 0)
+            return ['parsed' => [], 'month' => []];
+       else {
+         $csv->offset = $empOffset;
+         $condition = $hdr['ΑΦΜ'] . ' is '.$afm;
+         $csv->conditions = $condition;
+         $csv->parse($csvFile);
+         $parsed = $csv->data;
+       }
+     }
+     // else, find @ csv
+     else {
+       $csv->offset = $empOffset;
+       $condition = $hdr['ΑΦΜ'] . ' is '.$afm.' AND 1 contains '.grstrtoupper($surname);
+       $csv->conditions = $condition;
+       $csv->parse($csvFile);
+       $parsed = $csv->data;
 
-		 // enhanced check of surname (instead of 'contains' in fullname)
-		 if ($parsed){
-			 $tmp = explode(' ',$parsed[0][1]);
-			 $fileSurname = $tmp[0];
-			 if (strcmp(grstrtoupper($surname), $fileSurname) <> 0)
-					return ['parsed' => [], 'month' => []];
-		 }
-
+       // enhanced check of surname (instead of 'contains' in fullname)
+       if ($parsed){
+         $tmp = explode(' ',$parsed[0][1]);
+         $fileSurname = $tmp[0];
+         if (strcmp(grstrtoupper($surname), $fileSurname) <> 0)
+            return ['parsed' => [], 'month' => []];
+       }
+     }
      // find month @ column ΜΗΝΑΣ
      $csv->offset = 1;
      $csv->conditions = $hdr['ΜΗΝΑΣ'] . ' contains ΜΙΣΘΟΔΟΣΙΑ';
