@@ -160,28 +160,44 @@ function renderTable($rec, $hdr, $isAnadr = 0) {
                      <th>Ποσό</th>
                   </tr>
                  </thead>
+                 <?php $counter = 1; ?>
                  <tbody>
                   <tr>
-                     <td>1</td>
+                     <td><?= $counter++ ?></td>
                      <td>Τακτική Μισθοδοσία</td>
-                     <td><?= filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΑΠ)') ?></td>
+                     <td><?= filterCol($rec,$hdr,'Μ.Κ.(ΠΟΣΟ)') ?></td>
                   </tr>
+                  <?php
+                     if (filterCol($rec,$hdr,'ΕΠΠ')>0):
+                   ?>
+                  <tr>
+                     <td><?= $counter++ ?></td>
+                     <td>Eπίδομα Προϊσταμένου/-ης</td>
+                     <td><?= filterCol($rec,$hdr,'ΕΠΠ') ?></td>
+                  </tr>
+               <?php endif; ?>
                   <?php
                      if (filterCol($rec,$hdr,'Ο.Ε.')>0):
                    ?>
                   <tr>
-                     <td>2</td>
+                     <td><?= $counter++ ?></td>
                      <td>Οικογενειακό επίδομα</td>
                      <td><?= filterCol($rec,$hdr,'Ο.Ε.') ?></td>
                   </tr>
                <?php endif; ?>
+                  <tr>
+                     <td>ΣΥΝΟΛΟ</td>
+                     <td></td>
+                     <td><?= filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΑΠ)') ?></td>
+                  </tr>
                  </tbody>
          </table>
          <!-- Asfalistika -->
          <table class="table table-bordered table-hover table-condensed table-responsive csv-results">
+                <?php $counter_eis = 1; ?>
                  <thead>
                   <tr>
-                     <th colspan=3 class="info"><?= $rec[$hdr['ΙΚΑ']]; ?></th>
+                     <th colspan=3 class="info">Κρατήσεις</th>
                   </tr>
                   <tr>
                      <th>A/A</th>
@@ -191,46 +207,49 @@ function renderTable($rec, $hdr, $isAnadr = 0) {
                  </thead>
                  <tbody>
                   <tr>
-                     <td>1</td>
-                     <td>Ασφαλιστικές Εισφορές</td>
+                     <td><?= $counter_eis++ ?></td>
+                     <td>Ασφαλιστικές Εισφορές (<?= $rec[$hdr['ΙΚΑ']]; ?>)</td>
                      <td><?= filterCol($rec,$hdr,'ΕΡΓΑΖΟΜ.') ?></td>
                   </tr>
                   <tr>
-                     <td>2</td>
-                     <td>Εργοδοτικές εισφορές</td>
+                     <td><?= $counter_eis++ ?></td>
+                     <td>Εργοδοτικές εισφορές (<?= $rec[$hdr['ΙΚΑ']]; ?>) <em>(δεν αθροίζονται)</em></td>
                      <td><?= filterCol($rec,$hdr,'ΕΡΓΟΔΟΤΗ') ?></td>
                   </tr>
+                  <?php
+                     if (filterCol($rec,$hdr,'ΕΚΤΑΚΤΗ ΕΙΣΦΟΡΑ')>0):
+                   ?>
+                  <tr>
+                     <td><?= $counter_eis++ ?></td>
+                     <td>Έκτακτη εισφορά</td>
+                     <td><?= filterCol($rec,$hdr,'ΕΚΤΑΚΤΗ ΕΙΣΦΟΡΑ') ?></td>
+                  </tr>
+               <?php endif; ?>
                   <?php
                   // if other TAMEIO
                   if (strlen($rec[$hdr['ΤΑΜΕΙΟ']])>0):
                      $tameio = 1;
                   ?>
                      <tr>
-                        <td colspan=3><?= $rec[$hdr['ΤΑΜΕΙΟ']]; ?></td>
-                     </tr>
-                     <tr>
-                        <td>3</td>
-                        <td>Ασφαλιστικές Εισφορές</td>
+                        <td><?= $counter_eis++ ?></td>
+                        <td>Ασφαλιστικές Εισφορές (<?= $rec[$hdr['ΤΑΜΕΙΟ']]; ?>)</td>
                         <td><?= filterCol($rec,$hdr,'ΕΡΓΑΖΟΜ.(ΤΑΜ)') ?></td>
                      </tr>
                      <tr>
-                        <td>4</td>
-                        <td>Εργοδοτικές εισφορές</td>
+                        <td><?= $counter_eis++ ?></td>
+                        <td>Εργοδοτικές εισφορές (<?= $rec[$hdr['ΤΑΜΕΙΟ']]; ?>) <em>(δεν αθροίζονται)</em></td>
                         <td><?= filterCol($rec,$hdr,'ΕΡΓΟΔΟΤΗ(ΤΑΜ)') ?></td>
                      </tr>
                   <?php endif;
                   ?>
                   <tr>
-                     <td colspan = 3>OAEΔ</td>
-                  </tr>
-                  <tr>
-                     <td></td>
+                     <td><?= $counter_eis++ ?></td>
                      <td>Υπέρ ΟΑΕΔ</td>
                      <td><?= filterCol($rec,$hdr,'ΟΑΕΔ') ?></td>
                   </tr>
                   <tr>
                      <td colspan=2>ΣΥΝΟΛΟ</td>
-                     <td><?= filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΙΚΑ)')+ filterCol($rec,$hdr,'ΟΑΕΔ')+filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΤΑΜ)') ?></td>
+                     <td><?= filterCol($rec,$hdr,'ΕΡΓΑΖΟΜ.')+ filterCol($rec,$hdr,'ΟΑΕΔ')+filterCol($rec,$hdr,'ΕΡΓΑΖΟΜ.(ΤΑΜ)')+filterCol($rec,$hdr,'ΕΚΤΑΚΤΗ ΕΙΣΦΟΡΑ') ?></td>
                   </tr>
                   <tr><td colspan=3></td></tr>
                   <tr class="info">
@@ -241,12 +260,12 @@ function renderTable($rec, $hdr, $isAnadr = 0) {
                      <td><?= filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΑΠ)') ?></td>
                   </tr>
                   <tr>
-                     <td colspan=2>Σύνολο Ασφαλιστικών Εισφορών</td>
-                     <td><?= filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΙΚΑ)')+ filterCol($rec,$hdr,'ΟΑΕΔ')+filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΤΑΜ)') ?></td>
+                     <td colspan=2>Σύνολο Κρατήσεων <em>(εργαζομένου)</em></td>
+                     <td>-<?= filterCol($rec,$hdr,'ΕΡΓΑΖΟΜ.')+ filterCol($rec,$hdr,'ΟΑΕΔ')+filterCol($rec,$hdr,'ΕΡΓΑΖΟΜ.(ΤΑΜ)')+filterCol($rec,$hdr,'ΕΚΤΑΚΤΗ ΕΙΣΦΟΡΑ') ?></td>
                   </tr>
                   <tr>
                      <td colspan=2>Φόρος</td>
-                     <td><?= filterCol($rec,$hdr,'ΦΟΡΟΣ') ?></td>
+                     <td>-<?= filterCol($rec,$hdr,'ΦΟΡΟΣ') ?></td>
                   </tr>
                   <tr class="success">
                      <td colspan=2>Καθαρά στο Δικαιούχο</td>
@@ -257,7 +276,7 @@ function renderTable($rec, $hdr, $isAnadr = 0) {
    </div> <!-- of row-->
 <?php
   $synolo_ap = filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΑΠ)');
-  $synolo_asf = filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΙΚΑ)')+ filterCol($rec,$hdr,'ΟΑΕΔ')+filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΤΑΜ)');
+  $synolo_asf = filterCol($rec,$hdr,'ΕΡΓΑΖΟΜ.')+ filterCol($rec,$hdr,'ΟΑΕΔ')+filterCol($rec,$hdr,'ΕΡΓΑΖΟΜ.(ΤΑΜ)')+filterCol($rec,$hdr,'ΕΚΤΑΚΤΗ ΕΙΣΦΟΡΑ');
   $synolo_for = filterCol($rec,$hdr,'ΦΟΡΟΣ');
   $synolo_kath = filterCol($rec,$hdr,'ΚΑΘΑΡΑ');
    $ret = ob_get_contents();
@@ -278,8 +297,8 @@ function renderSynola($apod, $asfal, $foros, $kath) {
       </thead>
       <tbody>
         <tr><td>Αποδοχές</td><td><?= sprintf("%.2f",$apod) ?></td></tr>
-        <tr><td>Ασφαλιστικές Εισφορές</td><td><?= sprintf("%.2f",$asfal) ?></td></tr>
-        <tr><td>Φόρος</td><td><?= sprintf("%.2f",$foros) ?></td></tr>
+        <tr><td>Κρατήσεις</td><td>-<?= sprintf("%.2f",$asfal) ?></td></tr>
+        <tr><td>Φόρος</td><td>-<?= sprintf("%.2f",$foros) ?></td></tr>
         <tr class="success"><td><strong>Καθαρά</strong></td><td><strong><?= sprintf("%.2f",$kath) ?></strong></td></tr>
       </tbody>
     </table>
