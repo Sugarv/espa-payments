@@ -7,7 +7,7 @@ require_once 'functions.php';
 $data = htmlspecialchars_decode($_REQUEST['data']);
 $afm = $_REQUEST['afm'];
 
-$stylesheet = file_get_contents('lib/bootstrap.min.css');
+$stylesheet = file_get_contents('vendor/twbs/bootstrap/dist/css/bootstrap.min.css');
 
 $fname = 'pdf/es_' . $afm . '_' . rand() . '.pdf';
 $footer = "$dnsiStrShort";

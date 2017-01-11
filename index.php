@@ -28,9 +28,9 @@ require 'functions.php';
   <body>
 
     <!-- Include essentials -->
-		<script src="lib/jquery-1.11.3.min.js"></script>
-		<script src="lib/bootstrap.min.js"></script>
-		<link rel="stylesheet" href="lib/bootstrap.min.css">
+		<script src="vendor/components/jquery/jquery.min.js"></script>
+		<script src="vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="vendor/fortawesome/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="lib/espa-csv.css">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
