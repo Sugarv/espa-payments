@@ -109,10 +109,14 @@ else {
     $inpSurname = $_POST['inputSurname'];
     $found = $single = $hasAnadr = 0;
     $allRecords = [];
+    
     $tmStr = 'Τ.Μ.';
     $adStr = 'ΑΔ.ΑΣΘ.';
     $synStr = 'ΣΥΝΟΛΟ';
     $anadrStr = 'ΑΝΑΔΡΟΜΙΚΑ';
+    $yperStr = 'ΥΠΕΡΩΡΙΕΣ';
+    $afStr = 'ΑΦΑΙΡΟΥΜΕΝΟ ΠΟΣΟ';
+    
     // init pdf output
     $pdfOutput = "<h4>$dnsiStr</h4><h3>Ενημέρωση μισθοδοσίας αναπληρωτών ΕΣΠΑ/ΠΔΕ</h3>";
 
@@ -167,7 +171,7 @@ else {
        $first = 1;
        // for each month
        foreach ($allRecords as $month => $recordSet) {
-             $tm = $synolo = $anadromika = [];
+             $tm = $synolo = $anadromika = $yperwries = $afair = [];
              $synolo_ap = $synolo_asf = $synolo_for = $synolo_kath = 0;
              $adeies = [];
              // check if multi records
@@ -179,7 +183,7 @@ else {
                // find T.M., adeia etc
                foreach ($recordSet as $rec) {
                    // find record types
-                   //print_r($rec);
+                   // find T.M. or ADEIA
                    if (array_key_exists($hdr['ΕΙΔ. ΑΠ.'], $rec)) {
                      $eidap = $rec[$hdr['ΕΙΔ. ΑΠ.']];
                      if ($eidap == $tmStr)
@@ -188,6 +192,16 @@ else {
                       $adeies[] = $rec;
                      elseif ($eidap == $anadrStr)
                       $anadromika = $rec;
+                   }
+                   // find YPERWRIA or ANADROMIKA or AFAIROYMENO POSO
+                   if (array_key_exists($hdr['Μ.Κ.(BM)'], $rec)) {
+                     $comp = $rec[$hdr['Μ.Κ.(BM)']];
+                     if ($comp == $anadrStr)
+                      $anadromika = $rec;
+                     elseif ($comp == $yperStr)
+                      $yperwries = $rec;
+                     elseif ($comp == $afStr)
+                      $afair = $rec;
                    }
                  }
              } // of else multi
@@ -217,7 +231,25 @@ else {
                }
                if ($anadromika) {
                   $outPut .= "<h3>ΑΝΑΔΡΟΜΙΚΑ</h3>";
-                  $ret = renderTable($anadromika,$hdr,1);
+                  $ret = renderSpecial($anadromika,$hdr);
+                  $outPut .= $ret['out'];
+                  $synolo_ap += $ret['apod'];
+                  $synolo_asf += $ret['asfal'];
+                  $synolo_for += $ret['foros'];
+                  $synolo_kath += $ret['kath'];
+               }
+               if ($afair) {
+                  $outPut .= "<h3>ΑΦΑΙΡΟΥΜΕΝΟ ΠΟΣΟ</h3>";
+                  $ret = renderSpecial($afair,$hdr);
+                  $outPut .= $ret['out'];
+                  $synolo_ap -= $ret['apod'];
+                  $synolo_asf -= $ret['asfal'];
+                  $synolo_for -= $ret['foros'];
+                  $synolo_kath -= $ret['kath'];
+               }
+               if ($yperwries) {
+                  $outPut .= "<h3>ΥΠΕΡΩΡΙΕΣ</h3>";
+                  $ret = renderSpecial($yperwries,$hdr);
                   $outPut .= $ret['out'];
                   $synolo_ap += $ret['apod'];
                   $synolo_asf += $ret['asfal'];
@@ -225,7 +257,7 @@ else {
                   $synolo_kath += $ret['kath'];
                }
                // if anadromika or adeies, print totals
-               if ($anadromika || $adeies) {
+               if ($anadromika || $adeies || $yperwries) {
                  $outPut .= renderSynola($synolo_ap, $synolo_asf, $synolo_for, $synolo_kath);
                }
                $pdfOutput .= '<h3>' . $month .'</h3><br>' . $outPut . '<pagebreak />';
@@ -242,7 +274,7 @@ else {
       </div> <!-- of panel-body -->
 	  <div class="panel-footer">
 		<div class="row">
-			<div class="col-md-3">
+			<div class="col-md-3 col-sm-3">
         <button id="pdfButton" type="button" name="button" class="btn btn-sm btn-success btn-block">Εξαγωγή όλων σε PDF</button>
 			</div>
       <div id="postData" style="display: none;">
@@ -253,7 +285,7 @@ else {
 	  </div>
     </div> <!-- of panel -->
       <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-2 col-sm-2">
             <a href="index.php?logout=1" class="btn btn-lg btn-danger btn-block" >Έξοδος</a>
         </div>
       </div>
@@ -264,9 +296,13 @@ else {
    <footer>
      <div class="container">
        <div class="row">
-         <div class="col-md-12">
+         <div class="col-md-11 col-sm-11">
            <br>
-           <p><small>&copy; B.Ζαχαριουδάκης<br><a href="mailto:it@dipe.ira.sch.gr">Τμ. Μηχανογράφησης ΔΙ.Π.Ε. Ηρακλείου</a>, 2015-16</small></p>
+           <p><small>&copy; B.Ζαχαριουδάκης<br><a href="mailto:it@dipe.ira.sch.gr">Τμ. Μηχανογράφησης ΔΙ.Π.Ε. Ηρακλείου</a>, 2015-17</small></p>
+         </div>
+         <div class="col-md-1 col-sm-1">
+           <br>
+           <a href="https://github.com/dipeira/espa-payments" target="_blank" title="Github"><i class="fa fa-2x fa-github" aria-hidden="true"></i></a>
          </div>
        </div>
      </div>

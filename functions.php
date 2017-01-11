@@ -71,26 +71,25 @@ function parseFind($csvFile, $afm, $surname){
      $csv->offset = 1;
      $csv->conditions = $hdr['ΜΗΝΑΣ'] . ' contains ΜΙΣΘΟΔΟΣΙΑ';
      $csv->parse($csvFile);
-     //$csv->fields =[19];
      $data = $csv->data;
      if($data){
-      $tmp = explode(' ',$data[0][19]);
+      $tmp = explode(' ',$data[0][$hdr['ΜΗΝΑΣ']]);
       $month = $tmp[2] . '_' . $tmp[3];
      }
      else $month = 'ΜΗΝΑΣ';
 
-     // find anadromika (if any)
+     // find anadromika, yperwries (if any)
      $csv->offset = $empOffset;
      $csv->conditions = '';
      $csv->parse($csvFile);
      $data = $csv->data;
      $i = $foundFrom = $foundTo = 0;
      foreach ($data as $row) {
-       if (array_key_exists('8',$row) && $afm == $row[8] && !$foundFrom) {
+       if (array_key_exists($hdr['ΑΦΜ'],$row) && $afm == $row[$hdr['ΑΦΜ']] && !$foundFrom) {
          $foundFrom = $i;
        }
-       if ($foundFrom && !$foundTo && array_key_exists('8',$row)){
-         if ($row[8] != '' && $row[8] != $afm) {
+       if ($foundFrom && !$foundTo && array_key_exists($hdr['ΑΦΜ'],$row)){
+         if ($row[$hdr['ΑΦΜ']] != '' && $row[$hdr['ΑΦΜ']] != $afm) {
            $foundTo = $i-1;
          }
        }
@@ -98,11 +97,13 @@ function parseFind($csvFile, $afm, $surname){
      }
      $tempData = array_slice($data, $foundFrom, $foundTo-$foundFrom+1);
      foreach ($tempData as $line) {
-       if ($line[10] == 'ΑΝΑΔΡΟΜΙΚΑ')
+       if ($line[$hdr['Μ.Κ.(BM)']] == 'ΑΝΑΔΡΟΜΙΚΑ' || $line[$hdr['Μ.Κ.(BM)']] == 'ΥΠΕΡΩΡΙΕΣ' ||  $line[$hdr['Μ.Κ.(BM)']] == 'ΑΦΑΙΡΟΥΜΕΝΟ ΠΟΣΟ'){
         $anadrData = $line;
+        if (count($anadrData)>0){
+          array_push($parsed, $anadrData);
+        }
+       }
      }
-     if (count($anadrData)>0)
-        array_push($parsed, $anadrData);
 
     return ['parsed' => $parsed, 'month' => $month];
 }
@@ -110,16 +111,20 @@ function parseFind($csvFile, $afm, $surname){
 // filterCol: used for csv numbers.
 // Returns proper float type, by replacing , (comma) with . (dot)
 function filterCol($ar,$hdr,$ind) {
-     return preg_replace("/[^-0-9\.]/",".",str_replace('.','',$ar[$hdr[$ind]]));
+  // first strip dots
+  $temp = str_replace('.','',$ar[$hdr[$ind]]);
+  // then strip minus
+  $temp = str_replace('-','',$temp);
+     return preg_replace("/[^-0-9\.]/",".",$temp);
 }
 
 // Render a table for the given record ($rec) based on the header array ($hdr)
-function renderTable($rec, $hdr, $isAnadr = 0) {
+function renderTable($rec, $hdr) {
    ob_start();
    ?>
    <div class="row">
      <!-- personal -->
-     <?php if (!$isAnadr): ?>
+     <div class="table-responsive">
       <table class="table table-bordered table-hover table-condensed table-responsive csv-results">
                <thead>
                  <tr>
@@ -146,8 +151,8 @@ function renderTable($rec, $hdr, $isAnadr = 0) {
                      <td><?= $rec[$hdr['ΗΜ.ΑΣΦ.']] ? $rec[$hdr['ΗΜ.ΑΣΦ.']] : ''; ?></td>
                  </tr>
                </tbody>
-         </table>
-       <?php endif; ?>
+      </table>
+     </div>
          <!-- TM -->
          <table class="table table-bordered table-hover table-condensed table-responsive csv-results">
                  <thead>
@@ -155,9 +160,9 @@ function renderTable($rec, $hdr, $isAnadr = 0) {
                      <th colspan=3 class="info">Τακτική μισθοδοσία</th>
                   </tr>
                   <tr>
-                     <th>A/A</th>
-                     <th>Τύπος</th>
-                     <th>Ποσό</th>
+                     <th class="col-md-2 col-sm-2">A/A</th>
+                     <th class="col-md-8 col-sm-8">Τύπος</th>
+                     <th class="col-md-2 col-sm-2">Ποσό</th>
                   </tr>
                  </thead>
                  <?php $counter = 1; ?>
@@ -186,8 +191,7 @@ function renderTable($rec, $hdr, $isAnadr = 0) {
                   </tr>
                <?php endif; ?>
                   <tr>
-                     <td>ΣΥΝΟΛΟ</td>
-                     <td></td>
+                     <td colspan=2>ΣΥΝΟΛΟ</td>
                      <td><?= filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΑΠ)') ?></td>
                   </tr>
                  </tbody>
@@ -200,21 +204,16 @@ function renderTable($rec, $hdr, $isAnadr = 0) {
                      <th colspan=3 class="info">Κρατήσεις</th>
                   </tr>
                   <tr>
-                     <th>A/A</th>
-                     <th>Τύπος</th>
-                     <th>Ποσό</th>
+                     <th class="col-md-2 col-sm-2">A/A</th>
+                     <th class="col-md-8 col-sm-8">Τύπος</th>
+                     <th class="col-md-2 col-sm-2">Ποσό</th>
                   </tr>
                  </thead>
                  <tbody>
                   <tr>
                      <td><?= $counter_eis++ ?></td>
-                     <td>Ασφαλιστικές Εισφορές (<?= $rec[$hdr['ΙΚΑ']]; ?>)</td>
+                     <td>Ασφαλιστικές Εισφορές (ΙΚΑ)</td>
                      <td><?= filterCol($rec,$hdr,'ΕΡΓΑΖΟΜ.') ?></td>
-                  </tr>
-                  <tr>
-                     <td><?= $counter_eis++ ?></td>
-                     <td>Εργοδοτικές εισφορές (<?= $rec[$hdr['ΙΚΑ']]; ?>) <em>(δεν αθροίζονται)</em></td>
-                     <td><?= filterCol($rec,$hdr,'ΕΡΓΟΔΟΤΗ') ?></td>
                   </tr>
                   <?php
                      if (filterCol($rec,$hdr,'ΕΚΤΑΚΤΗ ΕΙΣΦΟΡΑ')>0):
@@ -246,6 +245,11 @@ function renderTable($rec, $hdr, $isAnadr = 0) {
                      <td><?= $counter_eis++ ?></td>
                      <td>Υπέρ ΟΑΕΔ</td>
                      <td><?= filterCol($rec,$hdr,'ΟΑΕΔ') ?></td>
+                  </tr>
+                  <tr>
+                     <td><?= $counter_eis++ ?></td>
+                     <td>Εργοδοτικές εισφορές (ΙΚΑ) <em>(δεν αθροίζονται)</em></td>
+                     <td><?= filterCol($rec,$hdr,'ΕΡΓΟΔΟΤΗ') ?></td>
                   </tr>
                   <tr>
                      <td colspan=2>ΣΥΝΟΛΟ</td>
@@ -284,6 +288,91 @@ function renderTable($rec, $hdr, $isAnadr = 0) {
    return ['out'=>$ret, 'apod'=>$synolo_ap, 'asfal'=>$synolo_asf, 'foros'=> $synolo_for, 'kath'=>$synolo_kath];
 } // of function
 
+
+// Render a table for special payments
+function renderSpecial($rec, $hdr) {
+   ob_start();
+   ?>
+   <div class="row">
+         <!-- TM -->
+         <table class="table table-bordered table-hover table-condensed table-responsive csv-results">
+                 <thead>
+                  <tr>
+                     <th colspan=3 class="info">Αποδοχές</th>
+                  </tr>
+                 </thead>
+                 <tbody>
+                  <tr>
+                     <td class="col-md-10 col-sm-10">ΣΥΝΟΛΟ</td>
+                     <td class="col-md-2 col-sm-2"><?= filterCol($rec,$hdr,'ΕΠΠ') ?></td>
+                  </tr>
+                 </tbody>
+         </table>
+         <!-- Asfalistika -->
+         <table class="table table-bordered table-hover table-condensed table-responsive csv-results">
+                <?php $counter_eis = 1; ?>
+                 <thead>
+                  <tr>
+                     <th colspan=3 class="info">Κρατήσεις</th>
+                  </tr>
+                  <tr>
+                     <th class="col-md-2 col-sm-2">A/A</th>
+                     <th class="col-md-8 col-sm-8">Τύπος</th>
+                     <th class="col-md-2 col-sm-2">Ποσό</th>
+                  </tr>
+                 </thead>
+                 <tbody>
+                  <tr>
+                     <td><?= $counter_eis++ ?></td>
+                     <td>Ασφαλιστικές Εισφορές (ΙΚΑ)</td>
+                     <td><?= filterCol($rec,$hdr,'ΙΚΑ') ?></td>
+                  </tr>
+                  <tr>
+                     <td><?= $counter_eis++ ?></td>
+                     <td>Υπέρ ΟΑΕΔ</td>
+                     <td><?= filterCol($rec,$hdr,'ΕΚΤΑΚΤΗ ΕΙΣΦΟΡΑ') ?></td>
+                  </tr>
+                  <tr>
+                     <td><?= $counter_eis++ ?></td>
+                     <td>Εργοδοτικές εισφορές (ΙΚΑ) <em>(δεν αθροίζονται)</em></td>
+                     <td><?= filterCol($rec,$hdr,'ΕΡΓΑΖΟΜ.') ?></td>
+                  </tr>
+                  <tr>
+                     <td colspan=2>ΣΥΝΟΛΟ</td>
+                     <td><?= filterCol($rec,$hdr,'ΙΚΑ')+filterCol($rec,$hdr,'ΕΚΤΑΚΤΗ ΕΙΣΦΟΡΑ') ?></td>
+                  </tr>
+                  <tr><td colspan=3></td></tr>
+                  <tr class="info">
+                     <td colspan=4><h4><strong>Σύνολα</strong></h4></td>
+                  </tr>
+                  <tr>
+                     <td colspan=2>Σύνολο Αποδοχών</td>
+                     <td><?= filterCol($rec,$hdr,'ΕΠΠ') ?></td>
+                  </tr>
+                  <tr>
+                     <td colspan=2>Σύνολο Κρατήσεων <em>(εργαζομένου)</em></td>
+                     <td>-<?= filterCol($rec,$hdr,'ΙΚΑ')+filterCol($rec,$hdr,'ΕΚΤΑΚΤΗ ΕΙΣΦΟΡΑ') ?></td>
+                  </tr>
+                  <tr class="success">
+                     <td colspan=2>Καθαρά στο Δικαιούχο</td>
+                     <td><?= filterCol($rec,$hdr,'ΑΠΟΖ.ΙΚΑ') ?></td>
+                  </tr>
+                 </tbody>
+         </table>
+   </div> <!-- of row-->
+<?php
+  $synolo_ap = filterCol($rec,$hdr,'ΕΠΠ');
+  $synolo_asf = filterCol($rec,$hdr,'ΙΚΑ')+filterCol($rec,$hdr,'ΕΚΤΑΚΤΗ ΕΙΣΦΟΡΑ');
+  $synolo_for = filterCol($rec,$hdr,'ΦΟΡΟΣ');
+  $synolo_kath = filterCol($rec,$hdr,'ΑΠΟΖ.ΙΚΑ');
+   $ret = ob_get_contents();
+   ob_end_clean();
+   return ['out'=>$ret, 'apod'=>$synolo_ap, 'asfal'=>$synolo_asf, 'foros'=> $synolo_for, 'kath'=>$synolo_kath];
+} // of function
+
+
+
+
 // Render a table containing grand totals
 function renderSynola($apod, $asfal, $foros, $kath) {
   ob_start();
@@ -291,9 +380,15 @@ function renderSynola($apod, $asfal, $foros, $kath) {
   <div class="row">
     <table class="table table-bordered table-hover table-condensed table-responsive csv-results">
       <thead>
-        <th class="info" colspan=2>
-          <h3>Γενικά Σύνολα</h3>
-        </th>
+        <tr class="info">
+          <th colspan=2>
+            <h3>Γενικά Σύνολα</h3>
+          </th>
+        </tr>
+        <tr>
+          <th class="col-md-10 col-sm-10">Τύπος</th>
+          <th class="col-md-2 col-sm-2">Ποσό</th>
+        </tr>
       </thead>
       <tbody>
         <tr><td>Αποδοχές</td><td><?= sprintf("%.2f",$apod) ?></td></tr>
