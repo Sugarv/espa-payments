@@ -9,6 +9,8 @@ $canLog = 1;
 $logFile = 'login_log.txt';
 // clean up pdf files after XX minutes
 $cleanUpAfter = 10;
+// export to pdf or not (1 or 0)
+$exportPdf = 1;
 
 // Espa column headers
 // ESPA csv is a mess, with duplicate column names, that's why we keep field numbers in this array...
