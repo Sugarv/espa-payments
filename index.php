@@ -48,7 +48,7 @@ require 'functions.php';
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a class="navbar-brand" href="#">Μισθοδοσία ΕΣΠΑ/ΠΔΕ</a></li>
+            <li><a class="navbar-brand" href="index.php">Μισθοδοσία ΕΣΠΑ/ΠΔΕ</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li><a class="navbar-brand pull-right" href="<?= $dnsiLink ?>" target="_blank"><small><?= $dnsiStrShort ?></small></a></li>
@@ -71,33 +71,37 @@ require 'functions.php';
 if (isset($_GET['logout'])) {
   $_POST['inputAfm'] = $_POST['inputSurname'] = NULL;
 }
-if (!isset($_POST['inputAfm']) || !isset($_POST['inputSurname']) || !strlen($_POST['inputAfm']) || !strlen($_POST['inputSurname']))
+if (!isset($_POST['inputAfm']) || strlen($_POST['inputAfm']) != 9 || !isset($_POST['inputSurname']) || !strlen($_POST['inputAfm']) || !strlen($_POST['inputSurname']))
 {
+  $wrongAfm = isset($_POST['inputAfm']) && strlen($_POST['inputAfm']) != 9;
  ?>
 	<div class="container">
-      <div class="row">
-					<div class="col-md-8">
-	          <h2>Είσοδος στο σύστημα</h2>
-					<form action='index.php' class="form-horizontal" method="post" role="form">
-			        <h4 class="form-signin-heading">Παρακαλώ εισάγετε τα στοιχεία σας:</h4>
-			        <label for="inputSurname">Επώνυμο</label>
-			        <input type="text" name="inputSurname" class="form-control" placeholder="Επώνυμο" required autofocus>
-			        <label for="inputAfm" >ΑΦΜ</label>
-			        <input type="password" name="inputAfm" class="form-control" placeholder="ΑΦΜ" required>
-                 <br>
-			        <input id="submit" class="btn btn-lg btn-primary btn-block" type="submit" value="Είσοδος">
-			      </form>
-               <small><?= getLatestMonth(); ?></small>
+    <div class="row">
+        <div class="col-md-8">
+          <h2>Είσοδος στο σύστημα</h2>
+        <form id='login-form' class="form-horizontal" method="post" role="form">
+            <h4 class="form-signin-heading">Παρακαλώ εισάγετε τα στοιχεία σας:</h4>
+            <label for="inputSurname">Επώνυμο</label>
+            <input type="text" name="inputSurname" class="form-control" placeholder="Επώνυμο" required autofocus>
+            <div class="form-group <?= $wrongAfm ? 'has-error' : '';?>" style="margin:0px;">
+              <label for="inputAfm" >ΑΦΜ</label>
+              <input id="afm" type="password" name="inputAfm" class="form-control" placeholder="ΑΦΜ" required>
+              <?= $wrongAfm ? '<span id="helpBlock2" class="help-block">Λανθασμένο ΑΦΜ (πρέπει να έχει 9 ψηφία)</span>' : '';?>
+            </div>
+                <br>
+            <input id="submit" class="btn btn-lg btn-primary btn-block" type="submit" value="Είσοδος">
+          </form>
+              <small><?= getLatestMonth(); ?></small>
 
-	        </div>
-	        <div class="col-md-4">
-	          <h2>Βοήθεια</h2>
-	          <p>Εισάγετε ΜΟΝΟ το <strong>ΕΠΩΝΥΜΟ</strong> σας (με ελληνικούς χαρακτήρες) και το <strong>Α.Φ.Μ.</strong> σας.</p>
-            <br>
-            <p><?= $customMessage; ?></p>
-	       </div>
-		</div>
-   </div>
+        </div>
+        <div class="col-md-4">
+          <h2>Βοήθεια</h2>
+          <p>Εισάγετε ΜΟΝΟ το <strong>ΕΠΩΝΥΜΟ</strong> σας (με ελληνικούς χαρακτήρες) και το <strong>Α.Φ.Μ.</strong> σας.</p>
+          <br>
+          <p><?= $customMessage; ?></p>
+        </div>
+    </div>
+  </div>
 
 <?php
 }
@@ -326,6 +330,6 @@ else {
               }
            );
         });
-     });
+     });      
   </script>
 </html>

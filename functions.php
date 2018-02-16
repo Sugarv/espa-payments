@@ -54,7 +54,7 @@ function parseFind($csvFile, $afm, $surname){
      // else, find @ csv
      else {
        $csv->offset = $empOffset;
-       $condition = $hdr['ΑΦΜ'] . ' is '.$afm.' AND 1 contains '.grstrtoupper($surname);
+       $condition = $hdr['ΑΦΜ'] . ' contains '.$afm.' AND '.$hdr['Ονοματεπώνυμο'].' contains '.grstrtoupper($surname);
        $csv->conditions = $condition;
        $csv->parse($csvFile);
        $parsed = $csv->data;
@@ -117,6 +117,9 @@ function filterCol($ar,$hdr,$ind) {
   $temp = str_replace('-','',$temp);
      return preg_replace("/[^-0-9\.]/",".",$temp);
 }
+function removeQuotes($txt) {
+  return str_replace("'",'',$txt);
+}
 
 // Render a table for the given record ($rec) based on the header array ($hdr)
 function renderTable($rec, $hdr) {
@@ -136,7 +139,7 @@ function renderTable($rec, $hdr) {
                   <td>Ονοματεπώνυμο</td>
                   <td><?= $rec[$hdr['Ονοματεπώνυμο']]; ?></td>
                   <td >ΑΦΜ</td>
-                  <td><?= $rec[$hdr['ΑΦΜ']]; ?></td>
+                  <td><?= removeQuotes($rec[$hdr['ΑΦΜ']]); ?></td>
                  </tr>
                  <tr>
                   <td>Βαθμός-ΜΚ</td>
