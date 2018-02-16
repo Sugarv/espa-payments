@@ -277,6 +277,7 @@ else {
         </div> <!-- of tab-content-->
       </div> <!-- of panel-body -->
 	  <div class="panel-footer">
+    <?php if ($exportPdf){ ?>
 		<div class="row">
 			<div class="col-md-3 col-sm-3">
         <button id="pdfButton" type="button" name="button" class="btn btn-sm btn-success btn-block">Εξαγωγή όλων σε PDF</button>
@@ -286,6 +287,7 @@ else {
       </div>
       <div id="pdfLink"></div>
 		</div>
+    <?php } ?>
 	  </div>
     </div> <!-- of panel -->
       <div class="row">
