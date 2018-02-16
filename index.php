@@ -68,11 +68,77 @@ require 'functions.php';
 <?php
 
 // if not logged-in
-if (isset($_GET['logout'])) {
+if (isset($_POST['logout'])) {
   $_POST['inputAfm'] = $_POST['inputSurname'] = NULL;
 }
-if (!isset($_POST['inputAfm']) || strlen($_POST['inputAfm']) != 9 || !isset($_POST['inputSurname']) || !strlen($_POST['inputAfm']) || !strlen($_POST['inputSurname']))
+// if admin
+if ($_POST['inputSurname'] == 'admin' && strlen($adminPassword) > 5 && $_POST['inputAfm'] == $adminPassword){
+  $inpAfm = 0;
+  ?>
+  <script>
+    $(document).ready(function(){
+      $('#upload-form').on('submit', function(e){
+        //Stop the form from submitting itself to the server.
+        e.preventDefault();
+        // empty previous messages from div
+        $('#result').empty();
+        
+        $.ajax({
+            type: "POST",
+            url: 'upload.php',
+            data: new FormData(this),
+            contentType: false,
+            cache: false,
+            processData:false,
+            success: function(data){
+                $('<p>'+data+'</p>').appendTo('#result');
+            }
+        });
+      });
+    });
+  </script>
+  <div class="container">
+    <h1>Διαχείριση συστήματος</h1>
+    <div class="row">
+        <div class="col-md-6">
+          <h3>Ανέβασμα αρχείου</h3>
+          <form id='upload-form' action="upload.php" class="form-horizontal" method="post" role="form" enctype="multipart/form-data">
+              <h4>Επιλέξτε αρχείο για ανέβασμα (μόνο CSV):</h4>
+                <input type="file" name="fileToUpload" id="fileToUpload">
+                <br>
+                <input type="submit" value="Ανέβασμα" name="submit" class="btn btn-md btn-success">
+          </form>
+          <div id="result"></div>
+        </div>
+        
+        <div class="col-md-6">
+          <h3>Υπάρχοντα αρχεία</h3>
+          <ul>
+            <?php
+              // find and show all csv files in folder
+              $fileArr = scandir('csv');
+              foreach ($fileArr as $line) {
+                if (substr($line,-3) == 'csv') echo "<li>$line</li>";
+              }
+            ?>
+          </ul>
+        </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+        <form class="form-horizontal" method="post" role="form">
+          <input type="submit" value="Έξοδος" name="submit" class="btn btn-lg btn-danger btn-block">
+          <input type="hidden" name="logout" value="true">
+        </form>
+      </div>
+    </div>
+  </div>
+  <?php
+}
+// end of admin
+else if (!isset($_POST['inputAfm']) || strlen($_POST['inputAfm']) != 9 || !isset($_POST['inputSurname']) || !strlen($_POST['inputAfm']) || !strlen($_POST['inputSurname']))
 {
+  $inpAfm = 0;
   $wrongAfm = isset($_POST['inputAfm']) && strlen($_POST['inputAfm']) != 9;
  ?>
 	<div class="container">
@@ -82,7 +148,7 @@ if (!isset($_POST['inputAfm']) || strlen($_POST['inputAfm']) != 9 || !isset($_PO
         <form id='login-form' class="form-horizontal" method="post" role="form">
             <h4 class="form-signin-heading">Παρακαλώ εισάγετε τα στοιχεία σας:</h4>
             <label for="inputSurname">Επώνυμο</label>
-            <input type="text" name="inputSurname" class="form-control" placeholder="Επώνυμο" required autofocus>
+            <input value="<?= $wrongAfm? $_POST['inputSurname'] : '';?>" type="text" name="inputSurname" class="form-control" placeholder="Επώνυμο" required autofocus>
             <div class="form-group <?= $wrongAfm ? 'has-error' : '';?>" style="margin:0px;">
               <label for="inputAfm" >ΑΦΜ</label>
               <input id="afm" type="password" name="inputAfm" class="form-control" placeholder="ΑΦΜ" required>
@@ -292,7 +358,10 @@ else {
     </div> <!-- of panel -->
       <div class="row">
         <div class="col-md-2 col-sm-2">
-            <a href="index.php?logout=1" class="btn btn-lg btn-danger btn-block" >Έξοδος</a>
+          <form class="form-horizontal" method="post" role="form">
+            <input type="submit" value="Έξοδος" name="submit" class="btn btn-lg btn-danger btn-block">
+            <input type="hidden" name="logout" value="true">
+          </form>
         </div>
       </div>
    </div> <!-- of container -->
@@ -304,7 +373,7 @@ else {
        <div class="row">
          <div class="col-md-11 col-sm-11">
            <br>
-           <p><small>&copy; B.Ζαχαριουδάκης<br><a href="mailto:it@dipe.ira.sch.gr">Τμ. Μηχανογράφησης ΔΙ.Π.Ε. Ηρακλείου</a>, 2015-17</small></p>
+           <p><small>&copy; B.Ζαχαριουδάκης<br><a href="mailto:it@dipe.ira.sch.gr">Τμ. Μηχανογράφησης ΔΙ.Π.Ε. Ηρακλείου</a>, 2015-18</small></p>
          </div>
          <div class="col-md-1 col-sm-1">
            <br>
@@ -320,10 +389,10 @@ else {
 </body>
 <script type = "text/javascript">
      $(document).ready(function() {
-       var div = document.getElementById("postData");
-       var myData = div.textContent;
-       var userAfm = <?= $inpAfm ?>;
         $("#pdfButton").click(function(event){
+          var div = document.getElementById("postData");
+          var myData = div.textContent;
+          var userAfm = <?= $inpAfm ?>;
             $.post(
               "pdf.php",
               { afm: userAfm, data: myData },
@@ -334,4 +403,15 @@ else {
         });
      });      
   </script>
+  <?php if (strlen($gAnalytics) > 0): ?>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', '<?= $gAnalytics ?>', 'auto');
+      ga('send', 'pageview');
+    </script>
+  <?php endif; ?>
 </html>

@@ -29,4 +29,11 @@ $customMessage = "Η Μηχανογράφηση Π.Ε. Ηρακλείου παρ
 // sample: $customCodes = array('afm1' => 'code1', 'afm2' => 'code2')
 $customCodes = array();
 
+// google Analytics code
+// optional: insert google analytics code (e.g. UA-XXXXX-Y)
+$gAnalytics = '';
+
+// Admin password for file uploading
+// Note: username is 'admin', password must be 6 or more characters
+$adminPassword = '';
 ?>
