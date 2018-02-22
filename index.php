@@ -82,7 +82,6 @@ if ($_POST['inputSurname'] == 'admin' && strlen($adminPassword) > 5 && $_POST['i
         e.preventDefault();
         // empty previous messages from div
         $('#result').empty();
-        
         $.ajax({
             type: "POST",
             url: 'upload.php',
@@ -91,10 +90,31 @@ if ($_POST['inputSurname'] == 'admin' && strlen($adminPassword) > 5 && $_POST['i
             cache: false,
             processData:false,
             success: function(data){
-                $('<p>'+data+'</p>').appendTo('#result');
+                $('<p><strong>'+data+'</strong></p>').appendTo('#result');
+                setTimeout(() => {
+                  location.reload();
+                }, 3000);
             }
         });
       });
+      // when file is selected for deletion
+      $('.delete-file').on('click', function (e) {
+        e.preventDefault();
+        const theFile = e.currentTarget.id;
+        if (confirm('Θέλετε σίγουρα να διαγράψετε το αρχείο: '+ theFile)) {
+          $.ajax({
+            type: "POST",
+            url: 'upload.php',
+            data: {delete: theFile},
+            success: function(data){
+              $('<p><strong>'+data+'</strong></p>').appendTo('#result-delete');
+              setTimeout(() => {
+                location.reload();
+              }, 3000);
+            }
+        });
+        }
+      })
     });
   </script>
   <div class="container">
@@ -118,10 +138,12 @@ if ($_POST['inputSurname'] == 'admin' && strlen($adminPassword) > 5 && $_POST['i
               // find and show all csv files in folder
               $fileArr = scandir('csv');
               foreach ($fileArr as $line) {
-                if (substr($line,-3) == 'csv') echo "<li>$line</li>";
+                if (substr($line,-3) == 'csv') 
+                  echo "<li>$line&nbsp;<span title='Διαγραφή αρχείου'><a href='#' class='delete-file' id='$line'><i class='fa fa-trash'></i></a></span></li>";
               }
             ?>
           </ul>
+          <div id="result-delete"></div>
         </div>
     </div>
     <div class="row">

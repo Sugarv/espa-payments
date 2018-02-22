@@ -1,6 +1,13 @@
 <?php
-// source: https://www.w3schools.com/php/php_file_upload.asp
 $target_dir = "csv/";
+
+// handle delete file
+if (isset($_POST['delete'])) {
+    if (unlink($target_dir.$_POST['delete']))
+        echo "Το αρχείο " . $_POST['delete']. " διαγράφηκε με επιτυχία!";
+    die();
+}
+// source: https://www.w3schools.com/php/php_file_upload.asp
 
 $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 $uploadOk = 1;
