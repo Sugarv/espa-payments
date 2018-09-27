@@ -431,6 +431,11 @@ function clean_up($limit = 10){
 // Requires ALL files to be named YYMM_something.csv (Y: Year, M: month, e.g. 1610_etc.csv)
 function getLatestMonth(){
    $csvFiles = glob("csv/*.csv");
+   // if no files found, display message
+   if (sizeof($csvFiles) == 0){
+     echo "Δε βρέθηκαν αρχεία μισθοδοσίας.";
+     return;
+   }
    foreach ($csvFiles as $csvFile) {
       if (is_int((int)substr($csvFile,4,4)))
          $monAr[] = substr($csvFile,4,4);
