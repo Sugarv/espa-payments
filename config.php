@@ -35,5 +35,5 @@ $gAnalytics = '';
 
 // Admin password for file uploading
 // Note: username is 'admin', password must be 6 or more characters
-$adminPassword = '';
+$adminPassword = 'changeme';
 ?>

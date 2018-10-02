@@ -45,7 +45,7 @@ function parseFind($csvFile, $afm, $surname){
             return ['parsed' => [], 'month' => []];
        else {
          $csv->offset = $empOffset;
-         $condition = $hdr['ΑΦΜ'] . ' is '.$afm;
+         $condition = $hdr['ΑΦΜ'] . ' contains '.$afm;
          $csv->conditions = $condition;
          $csv->parse($csvFile);
          $parsed = $csv->data;
