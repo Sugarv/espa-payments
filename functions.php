@@ -430,6 +430,7 @@ function clean_up($limit = 10){
 // get the latest month from csv filenames.
 // Requires ALL files to be named YYMM_something.csv (Y: Year, M: month, e.g. 1610_etc.csv)
 function getLatestMonth(){
+   $has_data = false;
    $csvFiles = glob("csv/*.csv");
    // if no files found, display message
    if (sizeof($csvFiles) == 0){
@@ -437,12 +438,15 @@ function getLatestMonth(){
      return;
    }
    foreach ($csvFiles as $csvFile) {
-      if (is_int((int)substr($csvFile,4,4)))
-         $monAr[] = substr($csvFile,4,4);
-      else
-         return;
+      $trimmed = substr($csvFile,4,4);
+      if (is_numeric($trimmed)){
+        $monAr[] = $trimmed;
+        $has_data = true;
+      }
    }
-   $max = max($monAr);
-   echo "Τελευταία Μισθοδοσία: " . substr($max, 2, 2) . "/20" . substr($max, 0, 2);
+   if ($has_data){
+    $max = max($monAr);
+    echo "Τελευταία Μισθοδοσία: " . substr($max, 2, 2) . "/20" . substr($max, 0, 2);
+   }
 }
  ?>
