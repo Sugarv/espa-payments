@@ -1,10 +1,9 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "hash": "0f6ae853b872b4d79d0f57db397640d5",
     "content-hash": "5d3ed8368fc1e991a68866d84772d9d8",
     "packages": [
         {
@@ -45,7 +44,7 @@
             ],
             "description": "jQuery JavaScript Library",
             "homepage": "http://jquery.com",
-            "time": "2016-09-23 06:06:29"
+            "time": "2016-09-23T06:06:29+00:00"
         },
         {
             "name": "fortawesome/font-awesome",
@@ -93,7 +92,7 @@
                 "font",
                 "icon"
             ],
-            "time": "2015-11-30 17:28:02"
+            "time": "2015-11-30T17:28:02+00:00"
         },
         {
             "name": "mpdf/mpdf",
@@ -136,7 +135,7 @@
                 "php",
                 "utf-8"
             ],
-            "time": "2015-03-01 10:27:49"
+            "time": "2015-03-01T10:27:49+00:00"
         },
         {
             "name": "parsecsv/php-parsecsv",
@@ -172,7 +171,7 @@
                 }
             ],
             "description": "CSV data parser for PHP",
-            "time": "2014-06-03 00:37:04"
+            "time": "2014-06-03T00:37:04+00:00"
         },
         {
             "name": "twbs/bootstrap",
@@ -223,7 +222,7 @@
                 "responsive",
                 "web"
             ],
-            "time": "2016-07-25 15:51:55"
+            "time": "2016-07-25T15:51:55+00:00"
         }
     ],
     "packages-dev": [],

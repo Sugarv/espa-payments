@@ -85,26 +85,30 @@ function parseFind($csvFile, $afm, $surname){
      $data = $csv->data;
      $i = $foundFrom = $foundTo = 0;
      foreach ($data as $row) {
-       if (array_key_exists($hdr['ΑΦΜ'],$row) && $afm == $row[$hdr['ΑΦΜ']] && !$foundFrom) {
+       if (array_key_exists($hdr['ΑΦΜ'],$row) && $afm == trim($row[$hdr['ΑΦΜ']],'\'') && !$foundFrom) {
          $foundFrom = $i;
        }
-       if ($foundFrom && !$foundTo && array_key_exists($hdr['ΑΦΜ'],$row)){
-         if ($row[$hdr['ΑΦΜ']] != '' && $row[$hdr['ΑΦΜ']] != $afm) {
-           $foundTo = $i-1;
-         }
+       if ($foundFrom && 
+           !$foundTo && 
+           array_key_exists($hdr['Ονοματεπώνυμο'],$row) && 
+           strpos($row[$hdr['Ονοματεπώνυμο']], grstrtoupper($surname)) == 0){
+            $foundTo = $i+1;
        }
        $i++;
      }
      $tempData = array_slice($data, $foundFrom, $foundTo-$foundFrom+1);
      foreach ($tempData as $line) {
-       if ($line[$hdr['Μ.Κ.(BM)']] == 'ΑΝΑΔΡΟΜΙΚΑ' || $line[$hdr['Μ.Κ.(BM)']] == 'ΥΠΕΡΩΡΙΕΣ' ||  $line[$hdr['Μ.Κ.(BM)']] == 'ΑΦΑΙΡΟΥΜΕΝΟ ΠΟΣΟ'){
+       if ($line[$hdr['ΕΙΔ. ΑΠ.']] == 'ΑΝΑΔΡΟΜΙΚΑ' || 
+           $line[$hdr['ΕΙΔ. ΑΠ.']] == 'ΥΠΕΡΩΡΙΕΣ' ||  
+           $line[$hdr['ΕΙΔ. ΑΠ.']] == 'ΑΦΑΙΡΟΥΜΕΝΟ ΠΟΣΟ' || 
+           $line[$hdr['ΕΙΔ. ΑΠ.']] == 'ΣΥΜΨ. ΠΡ. ΜΗΝΑ'
+       ){
         $anadrData = $line;
         if (count($anadrData)>0){
           array_push($parsed, $anadrData);
         }
        }
      }
-
     return ['parsed' => $parsed, 'month' => $month];
 }
 
@@ -114,8 +118,8 @@ function filterCol($ar,$hdr,$ind) {
   // first strip dots
   $temp = str_replace('.','',$ar[$hdr[$ind]]);
   // then strip minus
-  $temp = str_replace('-','',$temp);
-     return preg_replace("/[^-0-9\.]/",".",$temp);
+  //$temp = str_replace('-','',$temp);
+  return preg_replace("/[^-0-9\.]/",".",$temp);
 }
 function removeQuotes($txt) {
   return str_replace("'",'',$txt);
@@ -193,9 +197,15 @@ function renderTable($rec, $hdr) {
                      <td><?= filterCol($rec,$hdr,'Ο.Ε.') ?></td>
                   </tr>
                <?php endif; ?>
+               <?php if(filterCol($rec,$hdr,'ΕΠΙΔ.ΕΡΓ.') > 0): ?>
+                  <tr>
+                     <td><?= $counter++ ?></td><td>Επίδομα εργοδοτικών εισφορών</td>
+                     <td><?= filterCol($rec,$hdr,'ΕΠΙΔ.ΕΡΓ.') ?></td>
+                  </tr>
+                  <?php endif; ?>
                   <tr>
                      <td colspan=2>ΣΥΝΟΛΟ</td>
-                     <td><?= filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΑΠ)') ?></td>
+                     <td><?= filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΑΠ)')+filterCol($rec,$hdr,'ΕΠΙΔ.ΕΡΓ.') ?></td>
                   </tr>
                  </tbody>
          </table>
@@ -264,7 +274,7 @@ function renderTable($rec, $hdr) {
                   </tr>
                   <tr>
                      <td colspan=2>Σύνολο Αποδοχών</td>
-                     <td><?= filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΑΠ)') ?></td>
+                     <td><?= filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΑΠ)')+filterCol($rec,$hdr,'ΕΠΙΔ.ΕΡΓ.') ?></td>
                   </tr>
                   <tr>
                      <td colspan=2>Σύνολο Κρατήσεων <em>(εργαζομένου)</em></td>
@@ -309,6 +319,12 @@ function renderSpecial($rec, $hdr) {
                      <td class="col-md-10 col-sm-10">ΣΥΝΟΛΟ</td>
                      <td class="col-md-2 col-sm-2"><?= filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΑΠ)') ?></td>
                   </tr>
+                  <? if(filterCol($rec,$hdr,'ΕΠΙΔ.ΕΡΓ.') > 0): ?>
+                  <tr>
+                     <td class="col-md-10 col-sm-10">Επίδομα εργοδοτικών εισφορών</td>
+                     <td class="col-md-2 col-sm-2"><?= filterCol($rec,$hdr,'ΕΠΙΔ.ΕΡΓ.') ?></td>
+                  </tr>
+                  <? endif; ?>
                  </tbody>
          </table>
          <!-- Asfalistika -->
@@ -350,15 +366,19 @@ function renderSpecial($rec, $hdr) {
                   </tr>
                   <tr>
                      <td colspan=2>Σύνολο Αποδοχών</td>
-                     <td><?= filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΑΠ)') ?></td>
+                     <td><?= filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΑΠ)')+filterCol($rec,$hdr,'ΕΠΙΔ.ΕΡΓ.') ?></td>
                   </tr>
                   <tr>
                      <td colspan=2>Σύνολο Κρατήσεων <em>(εργαζομένου)</em></td>
-                     <td>-<?= filterCol($rec,$hdr,'ΕΡΓΑΖΟΜ.')+filterCol($rec,$hdr,'ΟΑΕΔ') ?></td>
+                     <td><?= filterCol($rec,$hdr,'ΕΡΓΑΖΟΜ.')+filterCol($rec,$hdr,'ΟΑΕΔ') ?></td>
+                  </tr>
+                  <tr>
+                     <td colspan=2>Φόρος</td>
+                     <td><?= filterCol($rec,$hdr,'ΦΟΡΟΣ') ?></td>
                   </tr>
                   <tr class="success">
                      <td colspan=2>Καθαρά στο Δικαιούχο</td>
-                     <td><?= filterCol($rec,$hdr,'ΣΥΝΟΛΟ(ΑΠ)')-(filterCol($rec,$hdr,'ΕΡΓΑΖΟΜ.')+filterCol($rec,$hdr,'ΟΑΕΔ')) ?></td>
+                     <td><?= filterCol($rec,$hdr,'ΚΑΘΑΡΑ') ?></td>
                   </tr>
                  </tbody>
          </table>
