@@ -72,7 +72,10 @@ if (isset($_POST['logout'])) {
   $_POST['inputAfm'] = $_POST['inputSurname'] = NULL;
 }
 // if admin
-if ($_POST['inputSurname'] == 'admin' && strlen($adminPassword) > 5 && $_POST['inputAfm'] == $adminPassword){
+if (isset($_POST['inputSurname']) && 
+    $_POST['inputSurname'] == 'admin' && 
+    strlen($adminPassword) > 5 && 
+    $_POST['inputAfm'] == $adminPassword){
   $inpAfm = 0;
   ?>
   <script>
