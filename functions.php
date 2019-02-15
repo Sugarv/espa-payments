@@ -324,7 +324,7 @@ function renderSpecial($rec, $hdr) {
                      <td class="col-md-10 col-sm-10">Επίδομα εργοδοτικών εισφορών</td>
                      <td class="col-md-2 col-sm-2"><?= filterCol($rec,$hdr,'ΕΠΙΔ.ΕΡΓ.') ?></td>
                   </tr>
-                  <? endif; ?>
+                  <?php endif; ?>
                  </tbody>
          </table>
          <!-- Asfalistika -->
