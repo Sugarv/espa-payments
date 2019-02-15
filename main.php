@@ -84,7 +84,7 @@ if (isset($_POST['inputSurname']) &&
     </div>
     <div class="row">
       <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-        <form class="form-horizontal" method="post" role="form" action='main.php'>
+        <form class="form-horizontal" method="post" role="form" action='index.php'>
           <input type="submit" value="Έξοδος" name="submit" class="btn btn-lg btn-danger btn-block">
           <input type="hidden" name="logout" value="true">
         </form>
@@ -92,6 +92,7 @@ if (isset($_POST['inputSurname']) &&
     </div>
   </div>
   <?php
+  exit();
 }
 // end of admin
 
