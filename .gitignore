@@ -10,3 +10,4 @@ login_log.txt
 !csv/.htaccess
 !csv/index.html
 !pdf/index.html
+config.php

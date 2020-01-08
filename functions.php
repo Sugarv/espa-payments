@@ -67,6 +67,10 @@ function parseFind($csvFile, $afm, $surname){
             return ['parsed' => [], 'month' => []];
        }
      }
+     // If nothing found so far, return empty arrays
+     if (!$parsed) {
+       return ['parsed' => [], 'month' => []];
+     }
      // find month @ column ΜΗΝΑΣ
      $csv->offset = 1;
      $csv->conditions = $hdr['ΜΗΝΑΣ'] . ' contains ΜΙΣΘΟΔΟΣΙΑ';
@@ -96,7 +100,7 @@ function parseFind($csvFile, $afm, $surname){
        }
        $i++;
      }
-     $tempData = array_slice($data, $foundFrom, $foundTo-$foundFrom+1);
+     $tempData = array_slice($data, $foundFrom, $foundTo-$foundFrom+3);
      foreach ($tempData as $line) {
        if ($line[$hdr['ΕΙΔ. ΑΠ.']] == 'ΑΝΑΔΡΟΜΙΚΑ' || 
            $line[$hdr['ΕΙΔ. ΑΠ.']] == 'ΥΠΕΡΩΡΙΕΣ' ||  

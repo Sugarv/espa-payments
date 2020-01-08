@@ -1,8 +1,11 @@
 <?php
 // Parameters
-$dnsiStr = 'Δ/νση Π.Ε. Ηρακλείου';
-$dnsiStrShort = 'ΔΙ.Π.Ε. Ηρακλείου';
-$dnsiLink = 'http://dipe.ira.sch.gr/site';
+// Διεύθυνση Εκπαίδευσης
+$dnsiStr = '';
+// Διεύθυνση Εκπαίδευσης (Συντομογραφία)
+$dnsiStrShort = '';
+// Ιστοσελίδα Διεύθυνσης Εκπαίδευσης
+$dnsiLink = '';
 // set canLog to 1 to enable logging to file
 // file must be .txt to be protected from access
 $canLog = 1;
@@ -22,8 +25,7 @@ $hdr = Array (
 );
 
 // custom message to display @ help column
-$customMessage = "Η Μηχανογράφηση Π.Ε. Ηρακλείου παρέχει συμπληρωματικά τη δυνατότητα προστασίας του ΑΦΜ με κωδικό, δηλ. την είσοδο στο σύστημα μισθοδοσίας με ΑΦΜ & κωδικό (αντί του επωνύμου).<br>
-Περισσότερες πληροφορίες στο τηλ. 2810529301";
+$customMessage = "";
 
 // set custom employee codes, to be used instead of surnames
 // sample: $customCodes = array('afm1' => 'code1', 'afm2' => 'code2')
